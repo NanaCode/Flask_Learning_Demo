@@ -21,13 +21,16 @@ __date__ = '2018/6/17 17:01'
 
 api = RedPrint('book')
 
+
 # @api.route('/v1/book/get')
-@api.route('/get')
+# @api.route('/get')
+@api.route('', method=['GET'])
 def get_book():
     return 'get book'
 
 
 # @api.route('/v1/book/create')
-@api.route('/create')
+# @api.route('/create')
+@api.route('', method=['POST'])
 def create_book():
     return 'create book'
