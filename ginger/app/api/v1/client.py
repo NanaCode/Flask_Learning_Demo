@@ -1,11 +1,12 @@
 # _*_ coding: utf-8 _*_
 from app.libs.enums import ClientTypeEnum
+from app.models.user import User
 
 __author__ = 'Nana'
 __date__ = '2018/6/17 21:20'
 
 from app.libs.redprint import RedPrint
-from app.validators.forms import ClientForm
+from app.validators.forms import ClientForm, UserEmailForm
 
 api = RedPrint('client')
 
@@ -28,9 +29,11 @@ def create_client():
         promise = {
             ClientTypeEnum.USER_EMAIL: __register_user_by_email
         }
+        promise[form.type.data]()
+    return 'success'
 
 
-def __register_user_by_email(form):
-    User.register_by_email(form.account.data, form.secret.data)
-    # 解决form没有nickname参数的问题
-    
+def __register_user_by_email():
+    form = UserEmailForm(data=request.json)  # 注意一定要data = request.json
+    if form.validate():
+        User.register_by_email(form.nickname.data, form.account.data, form.secret.data)

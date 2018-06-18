@@ -1,7 +1,9 @@
 # _*_ coding: utf-8 _*_
-from wtforms.validators import DataRequired, length
+from wtforms import ValidationError
+from wtforms.validators import DataRequired, length, Regexp, Email
 
 from app.libs.enums import ClientTypeEnum
+from app.models.user import User
 
 __author__ = 'Nana'
 __date__ = '2018/6/17 21:28'
@@ -22,3 +24,21 @@ class ClientForm(Form):
             client = ClientTypeEnum(value)
         except ValueError as e:
             raise e
+        self.type.data = client
+
+
+# 解决form没有nickname参数的问题
+class UserEmailForm(ClientForm):
+    account = StringField(validators=[Email(message='invalidate email')])
+    secret = StringField(validators=[
+        DataRequired(),
+        # password can only include letters, numbers and '_'
+        Regexp(r'^[A-Za-z0-9_*$#@]{6, 22}$')  # 密码长度6-22位
+    ])
+    nickname = StringField(validators=[DataRequired(), length(min=2, max=22)])
+
+    # 验证账号是否已经注册过
+    # 面向对象的继承特性来减少代码的编写量
+    def validate_account(self, value):
+        if User.query.filter_by(email=value.data).first():
+            raise ValidationError()
