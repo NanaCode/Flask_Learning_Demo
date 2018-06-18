@@ -28,8 +28,9 @@ def create_client():
         promise = {
             ClientTypeEnum.USER_EMAIL: __register_user_by_email
         }
-    pass
 
 
-def __register_user_by_email():
-    pass
+def __register_user_by_email(form):
+    User.register_by_email(form.account.data, form.secret.data)
+    # 解决form没有nickname参数的问题
+    
